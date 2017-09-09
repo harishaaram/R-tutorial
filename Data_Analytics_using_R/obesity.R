@@ -1,0 +1,49 @@
+#obesity
+rm(list = ls())
+setwd('/home/harish/R/Data_Analytics_using_R')
+
+USDA = read.csv('USDA.csv')
+str(USDA)
+summary(USDA)
+
+which.max(USDA$Sodium)
+names(USDA)
+USDA$Description[265]
+
+highsodiumcontent = subset(USDA, Sodium > 10000)
+highsodiumcontent$Description
+
+match("CAVIAR", USDA$Description)
+USDA$Sodium[4154]
+USDA$Sodium[match("CAVIAR", USDA$Description)]
+summary(USDA$Sodium)
+sd(USDA$Sodium, na.rm = TRUE)
+
+#CALCULATING DISTRIBUTION FOR 1 SIGMA LEVEL
+sig1dist = sd(USDA$Sodium, na.rm = TRUE) + mean(USDA$Sodium, na.rm = TRUE)
+
+#PLOTING
+plot(USDA$Protein, USDA$TotalFat, xlab = "Protein", ylab = "Fat", col = "red")
+
+#WHICH FOOD TO TAKE FOR MY WORKOUT SCHEDULE(high protein less fat)
+workoutProtein = subset(USDA, USDA$Protein > 60 & USDA$TotalFat < 10)
+plot(workoutProtein$Protein, workoutProtein$TotalFat, xlab = "Protein", ylab = "Fat", col = "red")
+text(workoutProtein$Protein, workoutProtein$TotalFat,labels = workoutProtein$Description, cex =0.5, pos = 4, col = "blue")
+workoutProtein$Description
+workoutFood = write.csv(workoutProtein, "workoutfood.csv" )
+
+hist(USDA$VitaminC)
+hist(USDA$VitaminC, xlim=c(0,100), breaks = 2000)
+boxplot(USDA$Sugar, main="sugar levels", ylab="sugar in grams")
+
+#highsodium, High proteing, high fat variable
+USDA$Highsodium = as.numeric(USDA$Sodium > mean(USDA$Sodium, na.rm =  TRUE))
+USDA$Highprotein = as.numeric(USDA$Protein > mean(USDA$Protein, na.rm =  TRUE))
+USDA$Highfat = as.numeric(USDA$TotalFat > mean(USDA$TotalFat, na.rm =  TRUE))
+
+#grouping by highprotein
+table(USDA$Highsodium, USDA$Highfat)
+tapply(USDA$Iron, USDA$Highprotein, mean,na.rm = TRUE)
+tapply(USDA$VitaminC, USDA$Highprotein, mean,na.rm = TRUE)
+tapply(USDA$TotalFat, USDA$Highprotein, summary,na.rm = TRUE)
+tapply(USDA$Sodium, USDA$Highprotein, summary,na.rm = TRUE)
